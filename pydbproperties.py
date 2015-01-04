@@ -144,26 +144,17 @@ class pydbproperties():
 
     def store(self):
         """
-
+        Stores the dict to a database
         """
-
-        self.create_table()
 
         try:
             self._conn.query('delete from ' + self._table_name)
         except:
             pass
 
-        def key_exists(key):
-            try:
-                aux = self._conn.one('key', {'key': key})
-                if aux == key:
-                    return True
-            except:
-                return False
-            return False
-
         try:
+            # Create the table, and be happy without errors
+            self.create_table()
             for prop in self._keyorder:
                 if prop in self._origprops:
                     val = self._origprops[prop]
@@ -172,10 +163,15 @@ class pydbproperties():
                                        # 'value': self.escape(val)})
                                        'value': val})
         except:
+            raise
             pass
 
     def load(self):
-        self.create_table()
+        try:
+            # Create the table, and be happy without errors
+            self.create_table()
+        except:
+            pass
         # self._props = {}
         # self._keyorder = []
         # self._origprops = {}
@@ -379,6 +375,9 @@ class pydbproperties():
 
 if __name__ == "__main__":
     a = pydbproperties()
+    a.set_table_name('my_table')
+    for b in range(5):
+        a.set_property('key' + str(b), 'value' + str(b))
 
     config = {
         "host": 'localhost',
@@ -389,6 +388,6 @@ if __name__ == "__main__":
     a.conn(**config)
     # a.load()
     a.list()
-    a.set_property('llave2', 'perro:::2')
+    a.set_property('key_test', 'value_test')
     a.store()
     a.list()
