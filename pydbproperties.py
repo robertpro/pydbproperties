@@ -12,7 +12,7 @@ except:
     sys.exit(1)
     pass
 
-NULL = ('', None)
+NULL = ('', None, (), [], {})
 
 
 class pydbproperties():
@@ -80,6 +80,9 @@ class pydbproperties():
             key = key.strip()
             oldkey = oldkey.strip()
 
+        # oldvalue = self.unescape(oldvalue)
+        # value = self.unescape(value)
+
         # Patch from N B @ ActiveState
         curlies = re.compile("{.+?}")
         found = curlies.findall(value)
@@ -104,6 +107,24 @@ class pydbproperties():
             self._keyorder.append(key)
         pass
 
+    def escape(self, value):
+        # Java escapes the '=' and ':' in the value
+        # string with backslashes in the store method.
+        # So let us do the same.
+
+        newvalue = value.replace(':', '\:')
+        newvalue = newvalue.replace('=', '\=')
+
+        return newvalue
+
+    def unescape(self, value):
+        # Reverse of escape
+
+        newvalue = value.replace('\:', ':')
+        newvalue = newvalue.replace('\=', '=')
+
+        return newvalue
+
     def list(self, out=sys.stdout):
         """ Prints a listing of the properties to the
         stream 'out' which defaults to the standard output """
@@ -122,9 +143,42 @@ class pydbproperties():
         return self._props
 
     def store(self):
-        raise NotImplementedError
+        """
+
+        """
+
+        self.create_table()
+
+        try:
+            self._conn.query('delete from ' + self._table_name)
+        except:
+            pass
+
+        def key_exists(key):
+            try:
+                aux = self._conn.one('key', {'key': key})
+                if aux == key:
+                    return True
+            except:
+                return False
+            return False
+
+        try:
+            for prop in self._keyorder:
+                if prop in self._origprops:
+                    val = self._origprops[prop]
+                    self._conn.insert(self.get_table_name(),
+                                      {'key': prop,
+                                       # 'value': self.escape(val)})
+                                       'value': val})
+        except:
+            pass
 
     def load(self):
+        self.create_table()
+        # self._props = {}
+        # self._keyorder = []
+        # self._origprops = {}
         if self._conn is None:
             raise ValueError('Connection not initialized')
         attr = ('key', 'value')
@@ -252,9 +306,8 @@ class pydbproperties():
     def set_table_name(self, table_name):
         if table_name not in NULL:
             self._table_name = table_name
-        else:
-            raise ValueError('Table name can\'t be null')
-        pass
+            return
+        raise ValueError('Table name can\'t be null')
 
     def get_table_name(self):
         return self._table_name
@@ -277,26 +330,65 @@ class pydbproperties():
         pass
 
     def conn(self, **kwargs):
-        self._conn = myquerybuilder.QueryBuilder(**kwargs)
+        try:
+            self._conn = myquerybuilder.QueryBuilder(**kwargs)
+        except:
+            print('An error has occurred\n')
+            raise
         pass
+
+    def create_table(self):
+        """
+        Create a table, if you don't use set_table_name() method, the
+        name of the table will be default( pydbproperties )
+        """
+
+        def validate_table():
+            """
+            This method is auxiliar to create_table() method, it will
+            return True if table definition is correct
+            """
+            try:
+                aux = self._conn.query("describe " +
+                                       self._table_name).fetchall()
+                key = aux[0]
+                value = aux[1]
+                if len(aux) != 2 or\
+                        key['Field'] != 'key' or \
+                        value['Field'] != 'value' or\
+                        not key['Type'].lower().startswith('varchar') or\
+                        not value['Type'].lower().startswith('longtext') or\
+                        not key['Null'].upper() == 'NO' or\
+                        not value['Null'].upper() == 'YES':
+                    return False
+                return True
+            except:
+                return False
+
+        query = """
+        create table {0} ( `key` varchar(30) not null,
+        `value` longtext null, primary key (`key`));
+        """.format(self.get_table_name())
+        try:
+            self._conn.query(query)
+        except:
+            pass
+        return validate_table()
     pass
 
 
 if __name__ == "__main__":
     a = pydbproperties()
-    #for b in range(10):
-    #    a.set_property('key' + str(b), 'value' + str(b))
-    #    pass
-    #print(a.get_property_dict())
-    #print(a.get_property('key11'))
-    # a.store()
+
     config = {
         "host": 'localhost',
         "user": 'root',
         "passwd": '',
         "db": 'test_pydbproperties',
     }
-
     a.conn(**config)
-    a.load()
-    print(a.get_property_dict())
+    # a.load()
+    a.list()
+    a.set_property('llave2', 'perro:::2')
+    a.store()
+    a.list()
