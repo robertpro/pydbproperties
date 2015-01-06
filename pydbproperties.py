@@ -148,20 +148,24 @@ class pydbproperties():
         """
 
         try:
-            self._conn.query('delete from ' + self._table_name)
-        except:
-            pass
-
-        try:
             # Create the table, and be happy without errors
             self.create_table()
             for prop in self._keyorder:
                 if prop in self._origprops:
                     val = self._origprops[prop]
-                    self._conn.insert(self.get_table_name(),
-                                      {'key': prop,
-                                       # 'value': self.escape(val)})
-                                       'value': val})
+                    if prop == self._conn.one(('key',), self.get_table_name(),
+                                              {'key': prop}):
+                        # if prop == self._conn.query('update `my_table` set
+                        # `key`='key5' where `key`='key0')
+                        # Update
+                        self._conn.update(self.get_table_name(),
+                                          {'value': val}, {'key': prop})
+                    else:
+                        # Insert
+                        self._conn.insert(self.get_table_name(),
+                                          {'key': prop,
+                                           # 'value': self.escape(val)})
+                                           'value': val})
         except:
             raise
             pass
@@ -386,7 +390,7 @@ if __name__ == "__main__":
         "db": 'test_pydbproperties',
     }
     a.conn(**config)
-    # a.load()
+    a.load()
     a.list()
     a.set_property('key_test', 'value_test')
     a.store()
