@@ -4,6 +4,16 @@ from __future__ import print_function
 import re
 import sys
 
+__doc__ = """
+author: Roberto Meza
+mail: robertpro01@gmail.com
+
+With this script, you can use key and values as property
+it save the properties into a table, you can change the
+name of the table, and list the properties into a output
+stream or file stream, etc.
+"""
+
 try:
     import myquerybuilder
 except:
@@ -140,6 +150,9 @@ class pydbproperties():
         pass
 
     def get_property_dict(self):
+        """
+        Returns property dict
+        """
         return self._props
 
     def store(self):
@@ -171,6 +184,9 @@ class pydbproperties():
             pass
 
     def load(self):
+        """
+        Load properties from database
+        """
         try:
             # Create the table, and be happy without errors
             self.create_table()
@@ -304,12 +320,18 @@ class pydbproperties():
         pass
 
     def set_table_name(self, table_name):
+        """
+        Sets table name
+        """
         if table_name not in NULL:
             self._table_name = table_name
             return
         raise ValueError('Table name can\'t be null')
 
     def get_table_name(self):
+        """
+        Returns table name
+        """
         return self._table_name
 
     def get_property_names(self):
@@ -317,6 +339,38 @@ class pydbproperties():
         dictionary, i.e the names of the properties """
 
         return self._props.keys()
+
+    def remove_property(self, property):
+        """
+        Remove a property
+        if property is None: remove all properties
+        """
+        if property is None:
+            self._props = {}
+            self._keyorder = []
+            self._keymap = {}
+            pass
+        else:
+            try:
+                self._props.pop(property)
+                self._keyorder.remove(property)
+                self._keymap.pop(property)
+            except:
+                pass
+        pass
+
+    def remove_property_db(self, prop):
+        """
+        Remove a property directly from a database
+        if property is None: remove all properties directly from a database
+        """
+        if prop is None:
+            value = None
+        else:
+            value = {'key': prop}
+            pass
+        self._conn.delete(self.get_table_name(), value)
+        pass
 
     def __getitem__(self, name):
         """ To support direct dictionary like access """
@@ -330,6 +384,9 @@ class pydbproperties():
         pass
 
     def conn(self, **kwargs):
+        """
+        Instance a connection with the database
+        """
         try:
             self._conn = myquerybuilder.QueryBuilder(**kwargs)
         except:
@@ -390,8 +447,18 @@ if __name__ == "__main__":
         "db": 'test_pydbproperties',
     }
     a.conn(**config)
+    a.list()
+    print('\nLoading from table')
     a.load()
     a.list()
     a.set_property('key_test', 'value_test')
     a.store()
+    a.list()
+    print('\nRemoving property "key2"')
+    a.remove_property('key2')
+    a.list()
+    print('\nOverriding value of property "key_test"')
+    a.set_property('key_test', 'value_test2')
+    a.list()
+    a.remove_property_db('key1')
     a.list()
