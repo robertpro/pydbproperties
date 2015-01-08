@@ -1,0 +1,10 @@
+setup.py
+pydbproperties/__init__.py
+pydbproperties/pydbproperties.py
+pydbproperties/setup.py
+pydbproperties/test.py
+pydbproperties.egg-info/PKG-INFO
+pydbproperties.egg-info/SOURCES.txt
+pydbproperties.egg-info/dependency_links.txt
+pydbproperties.egg-info/requires.txt
+pydbproperties.egg-info/top_level.txt

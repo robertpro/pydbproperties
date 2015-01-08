@@ -4,7 +4,7 @@
 from setuptools import setup
 
 setup(name="pydbproperties",
-      version=0.1,
+      version=1.0,
       description="Store property in database",
       author="Jose Roberto Meza Cabrera",
       author_email="robertpro01@gmail.com",
