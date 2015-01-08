@@ -33,7 +33,7 @@ And now you are ready to install pydbproperties:
 
 Example:
 ========
-    from pydbproperties.pydbproperties import pydbproperties
+    from pydbproperties import pydbproperties
     prop = pydbproperties()
     prop.set_table_name('my_table')
     for b in range(5):
