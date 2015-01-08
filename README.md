@@ -1,4 +1,4 @@
-pydbproperties 1.0
+pydbproperties 0.1
 ==============
 With this script, you can use store properties into a 
 MySQL table, you can change the name of the table, and 
