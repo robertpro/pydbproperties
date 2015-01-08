@@ -1,14 +1,43 @@
 pydbproperties 1.0
 ==============
-With this script, you can use key and values as property
-it save the properties into a table, you can change the
-name of the table, and list the properties into a output
-stream or file stream, etc.
+With this script, you can use store properties into a 
+MySQL table, you can change the name of the table, and 
+list the properties into a output stream or file 
+stream, etc.
 
-    a = pydbproperties()
-    a.set_table_name('my_table')
+Right now it only works with MySQL Database, I will be
+working in other databases.
+
+Dependencies:
+=============
+MySQL-python (1.2.3)
+MysqlSimpleQueryBuilder (0.2.8)
+
+Installation:
+=============
+MySQL-python has issues when installing by pip
+you can install it with your package manage of
+your distribution
+
+ubuntu: sudo apt-get install python2.7-mysqldb
+Centos/RHEL/Fedora: yum install MySQL-python
+
+Once MySQL-python is installed, you can install
+MysqlSimpleQueryBuilder:
+
+    pip install MysqlSimpleQueryBuilder
+
+And now you are ready to install pydbproperties:
+
+    pip install pydbproperties
+
+Example:
+========
+    from pydbproperties.pydbproperties import pydbproperties
+    prop = pydbproperties()
+    prop.set_table_name('my_table')
     for b in range(5):
-        a.set_property('key' + str(b), 'value' + str(b))
+        prop.set_property('key' + str(b), 'value' + str(b))
 
     config = {
         "host": 'localhost',
@@ -16,12 +45,12 @@ stream or file stream, etc.
         "passwd": '',
         "db": 'test_pydbproperties',
     }
-    a.conn(**config)
-    # a.load()
-    a.list()
-    a.set_property('key_test', 'value_test')
-    a.store()
-    a.list()
+    prop.conn(**config)
+    # prop.load()
+    prop.list()
+    prop.set_property('key_test', 'value_test')
+    prop.store()
+    prop.list()
     
     ======================                                                                                              
     Output:
