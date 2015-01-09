@@ -9,10 +9,10 @@ __doc__ = """
 author: José Roberto Meza Cabrera
 mail: robertpro01@gmail.com
 
-With this script, you can use key and values as property
-it save the properties into a table, you can change the
-name of the table, and list the properties into a output
-stream or file stream, etc.
+With this script, you can use store properties into a
+MySQL table, you can change the name of the table, and
+list the properties into a output stream or file
+stream, etc.
 """
 
 try:
@@ -47,18 +47,46 @@ class pydbproperties():
         self._conn = None
         # Table name for properties
         self._table_name = 'pydbproperties'
+        # auto store and auto load atributes
+        self._auto_load = False
+        self._auto_store = False
+        pass
+
+    def set_auto_load(self, boolean):
+        """ Set True for working directly with the database """
+        self._auto_load = boolean
+        pass
+
+    def set_auto_store(self, boolean):
+        """ Set True for working directly with the database """
+        self._auto_store = boolean
+        pass
+
+    def _load(self):
+        if self._auto_load and self._conn is not None:
+            self.load()
+            pass
+        pass
+
+    def _store(self):
+        if self._auto_store and self._conn is not None:
+            self.store()
+            pass
         pass
 
     def get_property(self, key):
         """ Return a property for the given key """
 
+        self._load()
         return self._props.get(key, '')
 
     def set_property(self, key, value):
         """ Set the property for the given key """
+
         if type(key) is str and type(value) is str:
             if len(key) != 0:
                 self.process_pair(key, value)
+                self._store()
             else:
                 raise ValueError("key can't be null!")
         else:
@@ -140,6 +168,7 @@ class pydbproperties():
         """ Prints a listing of the properties to the
         stream 'out' which defaults to the standard output """
 
+        self._load()
         if out == sys.stdout or type(out) is file:
             out.write('-- listing properties --\n')
             for key, value in self._props.items():
@@ -154,6 +183,8 @@ class pydbproperties():
         """
         Returns property dict
         """
+
+        self._load()
         return self._props
 
     def store(self):
@@ -333,12 +364,14 @@ class pydbproperties():
         """
         Returns table name
         """
+
         return self._table_name
 
     def get_property_names(self):
         """ Return an iterator over all the keys of the property
         dictionary, i.e the names of the properties """
 
+        self._load()
         return self._props.keys()
 
     def remove_property(self, property):
@@ -346,6 +379,9 @@ class pydbproperties():
         Remove a property
         if property is None: remove all properties
         """
+        if self._auto_store and self._conn is not None:
+            self.remove_property_db(property)
+
         if property is None:
             self._props = {}
             self._keyorder = []
