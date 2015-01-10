@@ -1,5 +1,7 @@
 MANIFEST.in
 README.md
+__init__.py
+pydbproperties.html
 pydbproperties.py
 setup.py
 pydbproperties.egg-info/PKG-INFO

@@ -198,6 +198,7 @@ class pydbproperties():
             for prop in self._keyorder:
                 if prop in self._origprops:
                     val = self._origprops[prop]
+                    self._conn.ping()
                     if prop == self._conn.one(('key',), self.get_table_name(),
                                               {'key': prop}):
                         # if prop == self._conn.query('update `my_table` set
@@ -232,6 +233,7 @@ class pydbproperties():
         attr = ('key', 'value')
         if self._table_name in NULL:
             raise ValueError('Table name can\'t be null')
+        self._conn.ping()
         properties_dict = self._conn.select(attr, self._table_name)
         properties_list = [b.get('key') + '=' + b.get('value') +
                            '\n' for b in properties_dict]
@@ -406,6 +408,7 @@ class pydbproperties():
         else:
             value = {'key': prop}
             pass
+        self._conn.ping()
         self._conn.delete(self.get_table_name(), value)
         pass
 
@@ -464,6 +467,7 @@ class pydbproperties():
         `value` longtext null, primary key (`key`));
         """.format(self.get_table_name())
         try:
+            self._conn.ping()
             self._conn.query(query)
         except:
             pass
