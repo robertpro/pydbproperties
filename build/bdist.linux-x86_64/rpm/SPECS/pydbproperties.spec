@@ -1,7 +1,7 @@
 %define name pydbproperties
-%define version 0.2.1
-%define unmangled_version 0.2.1
-%define unmangled_version 0.2.1
+%define version 0.3
+%define unmangled_version 0.3
+%define unmangled_version 0.3
 %define release 1
 
 Summary: Store property in database, like pyjavaproperties(Property JAVA)
@@ -18,7 +18,7 @@ Vendor: Jose Roberto Meza Cabrera <robertpro01@gmail.com>
 Url: https://github.com/robertpro
 
 %description
-pydbproperties 0.2.1
+pydbproperties 0.3
 ==============
 With this script, you can use store properties into a 
 MySQL table, you can change the name of the table, and 

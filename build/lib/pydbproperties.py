@@ -62,6 +62,9 @@ class pydbproperties():
         self._auto_store = boolean
         pass
 
+    def get_db_connector(self):
+        return self._conn
+
     def _load(self):
         if self._auto_load and self._conn is not None:
             self.load()

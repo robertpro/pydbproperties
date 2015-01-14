@@ -1,12 +1,12 @@
 Metadata-Version: 1.0
 Name: pydbproperties
-Version: 0.2.1
+Version: 0.3
 Summary: Store property in database, like pyjavaproperties(Property JAVA)
 Home-page: https://github.com/robertpro
 Author: Jose Roberto Meza Cabrera
 Author-email: robertpro01@gmail.com
 License: GPL v3
-Description: pydbproperties 0.2.1
+Description: pydbproperties 0.3
         ==============
         With this script, you can use store properties into a 
         MySQL table, you can change the name of the table, and 

@@ -6,7 +6,7 @@ from setuptools import setup
 LONG_DESCRIPTION = open('README.md').read()
 
 setup(name="pydbproperties",
-      version="0.2.1",
+      version="0.3",
       description="Store property in database, like pyjavaproperties"
       "(Property JAVA)",
       long_description=LONG_DESCRIPTION,
